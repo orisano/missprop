@@ -29,6 +29,10 @@ func run(pass *analysis.Pass) (interface{}, error) {
 	inspect.Preorder(nodeFilter, func(n ast.Node) {
 		switch n := n.(type) {
 		case *ast.CompositeLit:
+			t, ok := pass.TypesInfo.TypeOf(n).Underlying().(*types.Struct)
+			if !ok {
+				return
+			}
 			if len(n.Elts) == 0 {
 				return
 			}
@@ -38,10 +42,10 @@ func run(pass *analysis.Pass) (interface{}, error) {
 
 			used := map[string]bool{}
 			for _, elt := range n.Elts {
-				used[elt.(*ast.KeyValueExpr).Key.(*ast.Ident).Name] = true
+				key := elt.(*ast.KeyValueExpr).Key
+				used[key.(*ast.Ident).Name] = true
 			}
 
-			t := pass.TypesInfo.TypeOf(n).Underlying().(*types.Struct)
 			for i := 0; i < t.NumFields(); i++ {
 				name := t.Field(i).Name()
 				if _, ok := used[name]; !ok {
