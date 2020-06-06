@@ -6,7 +6,7 @@ go get -u github.com/orisano/missprop/cmd/missprop
 ```
 
 ## Author
-Nao YONASHIRO (@orisano)
+Nao Yonashiro (@orisano)
 
 ## License
 MIT
